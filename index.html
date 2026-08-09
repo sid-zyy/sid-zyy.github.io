@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siddhartha Shankar — Research &amp; Systems</title>
+<meta name="description" content="ML Research | Quant Signals | Systems — Portfolio of Siddhartha Shankar, CS student at MIT Bengaluru working in mechanistic interpretability, quantitative signal design, and low-level systems.">
+<meta property="og:title" content="Siddhartha Shankar — Research &amp; Systems">
+<meta property="og:description" content="ML Research | Quant Signals | Systems — first-authored paper on attention-head modularity, Gold-level WorldQuant Brain consultant.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://siddharthashankar.me">
+<meta property="og:image" content="https://siddharthashankar.me/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://siddharthashankar.me/og-image.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D10%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 font-family=%22Georgia,serif%22 fill=%22%23E8A33D%22 text-anchor=%22middle%22>S</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;1,9..144,450&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0D10;
+    --bg-alt:#12151A;
+    --bg-raise:#181C22;
+    --rule:#242830;
+    --text:#E9E6DE;
+    --text-muted:#8C9099;
+    --text-dim:#5B5F68;
+    --accent:#E8A33D;
+    --accent-dim:rgba(232,163,61,0.14);
+    --accent-line:rgba(232,163,61,0.35);
+    --serif:'Fraunces', Georgia, serif;
+    --sans:'Inter', -apple-system, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent-dim); color:var(--accent);}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+  .rule{border:none; border-top:1px solid var(--rule); margin:0;}
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,13,16,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--rule);
+  }
+  nav .inner{
+    max-width:var(--maxw); margin:0 auto; padding:16px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  nav .brand{font-family:var(--serif); font-size:17px; font-weight:600; letter-spacing:0.01em;}
+  nav .brand span{color:var(--accent);}
+  nav ul{list-style:none; display:flex; gap:28px;}
+  nav a{
+    font-family:var(--mono); font-size:12.5px; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--text-muted);
+    transition:color .2s ease;
+  }
+  nav a:hover, nav a:focus-visible{color:var(--accent);}
+  nav .cta{
+    border:1px solid var(--accent-line); color:var(--accent);
+    padding:7px 14px; border-radius:2px;
+  }
+  nav .cta:hover{background:var(--accent-dim);}
+
+  nav .navtoggle{
+    display:none;
+    background:none; border:1px solid var(--rule); border-radius:2px;
+    width:38px; height:34px; padding:0; cursor:pointer;
+    align-items:center; justify-content:center; gap:4px; flex-direction:column;
+  }
+  nav .navtoggle span{width:16px; height:1px; background:var(--text); display:block;}
+  nav .navtoggle:hover{border-color:var(--accent-line);}
+
+  .mobile-menu{
+    display:none;
+    position:fixed; inset:0 0 0 0; top:65px;
+    background:rgba(11,13,16,0.98);
+    backdrop-filter:blur(10px);
+    z-index:49;
+    padding:8px 32px 32px;
+    flex-direction:column;
+  }
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{
+    font-family:var(--mono); font-size:15px; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--text);
+    padding:18px 0; border-bottom:1px solid var(--rule);
+  }
+  .mobile-menu a:last-child{border-bottom:none;}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative; overflow:hidden; padding-top:96px; padding-bottom:88px;}
+  .hero canvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    opacity:0.55;
+    mask-image:linear-gradient(to bottom, black 0%, black 55%, transparent 96%);
+    -webkit-mask-image:linear-gradient(to bottom, black 0%, black 55%, transparent 96%);
+  }
+  .hero .inner{position:relative; z-index:2;}
+  .hero .eyebrow{margin-bottom:22px; display:flex; align-items:center; gap:10px;}
+  .hero .eyebrow::before{
+    content:''; width:7px; height:7px; background:var(--accent); border-radius:50%;
+    box-shadow:0 0 8px 1px var(--accent-line);
+  }
+  h1{
+    font-family:var(--serif);
+    font-weight:450;
+    font-size:clamp(42px, 7vw, 74px);
+    line-height:1.03;
+    letter-spacing:-0.01em;
+    max-width:14ch;
+  }
+  h1 em{font-style:italic; color:var(--accent); font-weight:450;}
+  .hero .role-line{
+    font-family:var(--mono); font-size:14px; color:var(--text-muted);
+    margin-top:20px; letter-spacing:0.01em;
+  }
+  .hero .role-line span{color:var(--text-dim); padding:0 10px;}
+  .hero p.lede{
+    font-size:18px; color:var(--text-muted); max-width:52ch;
+    margin-top:22px; line-height:1.65;
+  }
+  .hero-actions{display:flex; gap:14px; margin-top:36px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13px; letter-spacing:0.03em;
+    padding:12px 22px; border-radius:2px; display:inline-flex; align-items:center; gap:8px;
+    transition:all .2s ease;
+  }
+  .btn.primary{background:var(--accent); color:#14110A; font-weight:500;}
+  .btn.primary:hover{background:#f2b657; transform:translateY(-1px);}
+  .btn.ghost{border:1px solid var(--rule); color:var(--text);}
+  .btn.ghost:hover{border-color:var(--accent-line); color:var(--accent);}
+
+  .stat-row{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+    margin-top:64px; border-top:1px solid var(--rule);
+  }
+  .stat{padding:22px 0 0 0; border-right:1px solid var(--rule);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:var(--serif); font-size:28px; color:var(--accent);}
+  .stat .label{font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-top:4px;}
+
+  /* ---------- Sections generic ---------- */
+  section{padding:88px 0;}
+  section.tight{padding:64px 0;}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:44px; gap:20px; flex-wrap:wrap;}
+  .section-head h2{font-family:var(--serif); font-weight:450; font-size:clamp(28px,4vw,38px);}
+  .section-head .idx{font-family:var(--mono); font-size:12px; color:var(--text-dim);}
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:none;}
+
+  #summary .grid{display:grid; grid-template-columns:1fr 1.4fr; gap:60px;}
+  #summary p{font-size:19px; color:var(--text-muted); line-height:1.75;}
+  #summary p strong{color:var(--text); font-weight:500;}
+  .fact-list{font-family:var(--mono); font-size:13px; color:var(--text-muted);}
+  .fact-list div{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--rule);}
+  .fact-list span:last-child{color:var(--text);}
+
+  /* ---------- Experience ---------- */
+  .xp{display:grid; grid-template-columns:150px 1fr; gap:28px; padding:30px 0; border-top:1px solid var(--rule);}
+  .xp:last-child{border-bottom:1px solid var(--rule);}
+  .xp time{font-family:var(--mono); font-size:12.5px; color:var(--accent); letter-spacing:0.02em;}
+  .xp h3{font-family:var(--serif); font-size:22px; font-weight:500; margin-bottom:2px;}
+  .xp .org{font-family:var(--mono); font-size:12.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:14px;}
+  .xp ul{padding-left:18px; color:var(--text-muted); font-size:15px;}
+  .xp li{margin-bottom:8px;}
+  .xp li::marker{color:var(--accent);}
+
+  /* ---------- Research ---------- */
+  .paper-card{
+    background:var(--bg-alt); border:1px solid var(--rule); border-radius:4px;
+    padding:40px; position:relative; overflow:hidden;
+  }
+  .paper-card + .paper-card{margin-top:24px;}
+  .paper-card .tag{font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:0.08em; text-transform:uppercase;}
+  .paper-card h3{font-family:var(--serif); font-size:26px; font-weight:500; margin:12px 0 8px; max-width:26ch;}
+  .paper-card .authors{color:var(--text-muted); font-size:14px; margin-bottom:22px;}
+  .paper-card p.abstract{color:var(--text-muted); font-size:15px; line-height:1.75; max-width:70ch;}
+  .paper-links{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;}
+  .paper-links a{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.03em;
+    border:1px solid var(--rule); padding:8px 14px; border-radius:2px; color:var(--text-muted);
+    transition:all .2s ease;
+  }
+  .paper-links a:hover{border-color:var(--accent-line); color:var(--accent);}
+  .metric-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--rule); margin-top:28px; border:1px solid var(--rule);}
+  .metric{background:var(--bg-alt); padding:18px 16px;}
+  .metric .n{font-family:var(--serif); font-size:22px; color:var(--accent);}
+  .metric .l{font-family:var(--mono); font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:6px; line-height:1.4;}
+  .mini-matrix{position:absolute; right:-10px; top:-10px; opacity:0.5;}
+
+  .sub-project ul{padding-left:18px; color:var(--text-muted); font-size:14.5px;}
+  .sub-project li{margin-bottom:7px;}
+  .sub-project li::marker{color:var(--accent);}
+
+  /* ---------- Projects ---------- */
+  .proj-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule);}
+  .proj{background:var(--bg); padding:28px 26px; display:flex; flex-direction:column;}
+  .proj .meta-row{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:14px;}
+  .proj .stack{font-family:var(--mono); font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em;}
+  .proj .when{font-family:var(--mono); font-size:10.5px; color:var(--text-dim); white-space:nowrap;}
+  .proj h3{font-family:var(--serif); font-size:20px; font-weight:500; margin-bottom:10px;}
+  .proj p{color:var(--text-muted); font-size:14px; line-height:1.6; flex:1;}
+  .proj .proj-link{
+    font-family:var(--mono); font-size:11.5px; color:var(--accent);
+    margin-top:16px; display:inline-flex; align-items:center; gap:6px;
+  }
+  .proj .proj-link:hover{color:#f2b657;}
+  .proj-mini-row{display:flex; gap:1px; background:var(--rule); border:1px solid var(--rule); margin-top:1px;}
+  .proj-mini{background:var(--bg); padding:20px 24px; flex:1; display:flex; flex-direction:column;}
+  .proj-mini h4{font-family:var(--mono); font-size:13px; color:var(--text); margin-bottom:6px;}
+  .proj-mini p{font-size:13px; color:var(--text-muted); flex:1;}
+  .proj-mini .proj-link{
+    font-family:var(--mono); font-size:11px; color:var(--accent); margin-top:12px; display:inline-block;
+  }
+  .proj-mini .proj-link:hover{color:#f2b657;}
+
+  /* ---------- Skills ---------- */
+  .skill-cols{display:grid; grid-template-columns:repeat(4,1fr); gap:36px;}
+  .skill-col .h{font-family:var(--mono); font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:16px;}
+  .skill-col ul{list-style:none;}
+  .skill-col li{color:var(--text-muted); font-size:14.5px; padding:6px 0; border-bottom:1px solid var(--rule);}
+  .skill-col li:last-child{border-bottom:none;}
+
+  /* ---------- Education / Certs ---------- */
+  #edu .grid{display:grid; grid-template-columns:1.3fr 1fr; gap:60px;}
+  .edu-card h3{font-family:var(--serif); font-size:22px; font-weight:500;}
+  .edu-card .org{font-family:var(--mono); font-size:12.5px; color:var(--text-muted); margin:6px 0 16px;}
+  .edu-card .gpa{font-family:var(--mono); font-size:14px; color:var(--accent);}
+  .cert-list{list-style:none; font-size:14.5px; color:var(--text-muted);}
+  .cert-list li{padding:10px 0; border-bottom:1px solid var(--rule);}
+
+  /* ---------- Contact / Footer ---------- */
+  footer{border-top:1px solid var(--rule); padding:72px 0 40px;}
+  footer h2{font-family:var(--serif); font-size:clamp(30px,5vw,46px); font-weight:450; max-width:14ch;}
+  footer p{color:var(--text-muted); margin-top:16px; max-width:46ch;}
+  .contact-links{display:flex; gap:14px; margin-top:34px; flex-wrap:wrap;}
+  .foot-bottom{display:flex; justify-content:space-between; margin-top:80px; padding-top:24px; border-top:1px solid var(--rule); font-family:var(--mono); font-size:11.5px; color:var(--text-dim); flex-wrap:wrap; gap:10px;}
+
+  @media (max-width:860px){
+    nav ul{display:none;}
+    nav .navtoggle{display:flex;}
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .stat:nth-child(2){border-right:none;}
+    #summary .grid, #edu .grid{grid-template-columns:1fr; gap:36px;}
+    .metric-grid{grid-template-columns:repeat(2,1fr);}
+    .proj-grid{grid-template-columns:1fr;}
+    .proj-mini-row{flex-direction:column;}
+    .skill-cols{grid-template-columns:repeat(2,1fr); gap:28px;}
+    .xp{grid-template-columns:1fr; gap:8px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
+  :focus-visible{outline:1px solid var(--accent); outline-offset:3px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <div class="brand">SS<span>.</span></div>
+    <ul>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact" class="cta">Contact</a></li>
+    </ul>
+    <button class="navtoggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#experience">Experience</a>
+    <a href="#research">Research</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="matrix" aria-hidden="true"></canvas>
+  <div class="wrap inner">
+    <div class="eyebrow">Bengaluru, India — B.Tech CS, MIT Bengaluru</div>
+    <h1>Siddhartha<br>Shankar<span style="color:var(--accent)">.</span></h1>
+    <div class="role-line">ML Research<span>·</span>Quant Signals<span>·</span>Systems</div>
+    <p class="lede">A research-first builder working across <strong style="color:var(--text)">mechanistic interpretability</strong>, quantitative signal design, and systems programmed close to the metal — first-authored a paper on attention-head modularity, and currently building a federated GNN for drug interaction prediction.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#contact">Get in touch →</a>
+      <a class="btn ghost" href="https://github.com/sid-zyy" target="_blank" rel="noopener">View GitHub</a>
+      <a class="btn ghost" href="/resume.pdf" target="_blank" rel="noopener">Download Résumé</a>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="num">1</div><div class="label">First-authored paper</div></div>
+      <div class="stat"><div class="num">Gold</div><div class="label">WorldQuant Brain rank</div></div>
+      <div class="stat"><div class="num">15+</div><div class="label">Alpha signals shipped</div></div>
+      <div class="stat"><div class="num">100+</div><div class="label">Automated test cases</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="summary" class="reveal">
+    <div class="grid">
+      <div>
+        <div class="eyebrow">01 — About</div>
+        <h2 style="font-family:var(--serif); font-size:clamp(26px,3.4vw,34px); font-weight:450; margin-top:14px;">Depth over breadth, in every direction I go.</h2>
+      </div>
+      <div>
+        <p>Third-year Computer Science student at <strong>MIT Bengaluru</strong>, building at the intersection of ML research and systems engineering. My work spans <strong>attention-head ablation studies</strong> in mechanistic interpretability, <strong>alpha signal design</strong> as a Gold-level WorldQuant Brain consultant, and low-level systems like a memory allocator written from scratch. I care about the same thing in each: making claims that hold up under rigorous testing, whether that's a t-test on a transformer or an out-of-sample backtest on an equity signal.</p>
+        <div class="fact-list" style="margin-top:28px;">
+          <div><span>Location</span><span>Bengaluru, Karnataka</span></div>
+          <div><span>Institution</span><span>Manipal Institute of Technology</span></div>
+          <div><span>Graduating</span><span>June 2028</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section id="experience" class="reveal">
+    <div class="section-head">
+      <h2>Experience</h2>
+      <div class="idx">02 — Roles</div>
+    </div>
+
+    <div class="xp">
+      <time>2026 — Present</time>
+      <div>
+        <h3>Research Consultant</h3>
+        <div class="org">WorldQuant Brain</div>
+        <ul>
+          <li>Earned Gold-level Consultant status — an invite-only designation requiring 10,000+ platform points, placing among the top ≈1% of global contributors.</li>
+          <li>Designed and backtested 15+ quantitative alpha signals for global equity markets, improving out-of-sample Sharpe ratios using cross-sectional and time-series factor methods.</li>
+          <li>Worked across 85,000+ datafields spanning fundamental, technical, and alternative data via the BRAIN Python API.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="xp">
+      <time>Jun — Aug 2025</time>
+      <div>
+        <h3>Quality Assurance Engineer Intern</h3>
+        <div class="org">FalkonData</div>
+        <ul>
+          <li>Designed 100+ test cases spanning edge conditions, boundary inputs, and integration paths; traced root-cause patterns across recurring failure classes to improve testability.</li>
+          <li>Authored end-to-end automation suites in Playwright covering critical user journeys across multiple environments to catch regressions before release.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section id="research" class="reveal">
+    <div class="section-head">
+      <h2>Research</h2>
+      <div class="idx">03 — Papers &amp; ongoing work</div>
+    </div>
+
+    <div class="paper-card">
+      <svg class="mini-matrix" width="140" height="140" viewBox="0 0 140 140" aria-hidden="true">
+        <g id="staticMatrix"></g>
+      </svg>
+      <div class="tag">First-authored · ICWITE</div>
+      <h3>Emergent Modularity in Transformer Attention</h3>
+      <div class="authors">Siddhartha Shankar, Nikhil Kore, Soumyalatha Naveen — MIT Bengaluru, MAHE</div>
+      <p class="abstract">A large-scale empirical test of the additivity assumption in mechanistic interpretability — the common but rarely-verified claim that ablating multiple attention heads produces a performance drop equal to the sum of their individual drops. Pairwise ablation across four transformer models and two benchmark tasks shows that head-level modularity is an emergent property of scale rather than something built into the architecture: small models exhibit substantial non-additive interaction, while models above roughly 300M parameters behave close to additively.</p>
+      <div class="metric-grid">
+        <div class="metric"><div class="n">10,706</div><div class="l">Unique head pairs tested</div></div>
+        <div class="metric"><div class="n">6 / 8</div><div class="l">Experiments rejecting additivity</div></div>
+        <div class="metric"><div class="n">10:1</div><div class="l">Redundancy vs. synergy ratio</div></div>
+        <div class="metric"><div class="n">35×</div><div class="l">Drop in non-additivity, 117M→410M</div></div>
+      </div>
+    </div>
+
+    <div class="paper-card">
+      <div class="tag">Ongoing · Unpublished</div>
+      <h3>FedDDI-GNN — Federated Drug-Drug Interaction Prediction</h3>
+      <div class="authors">Solo research project — 2026 to present</div>
+      <div class="sub-project">
+        <ul>
+          <li>Built a GraphSAGE + Hadamard MLP link predictor on ogbl-ddi (0.80+ validation Hits@20 centralized); implemented FedAvg and FedProx baselines with the Flower federated-simulation framework.</li>
+          <li>Modeled non-IID hospital heterogeneity via ATC-aware Dirichlet sampling (α = 0.5), with a concept-drift simulator tracking degradation and recovery across 100-round federated runs.</li>
+          <li>Shipped a 101-test suite with GitHub Actions CI, Hydra config management, and Weights &amp; Biases tracking; quantified the ≈0.50 Hits@20 federation overhead the research now targets.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section id="projects" class="reveal">
+    <div class="section-head">
+      <h2>Projects</h2>
+      <div class="idx">04 — Built from scratch</div>
+    </div>
+
+    <div class="proj-grid">
+      <div class="proj">
+        <div class="meta-row">
+          <div class="stack">C · POSIX</div>
+          <div class="when">2025</div>
+        </div>
+        <h3>Custom Memory Allocator</h3>
+        <p>A drop-in malloc/free replacement using sbrk for small allocations and mmap for large ones. Implements block splitting, coalescing, and free-list management — 10,000 sequential alloc/free cycles run in under 0.1 ms.</p>
+        <a class="proj-link" href="https://github.com/sid-zyy/memallocator" target="_blank" rel="noopener">View repo ↗</a>
+      </div>
+      <div class="proj">
+        <div class="meta-row">
+          <div class="stack">Node.js · Express · MySQL</div>
+          <div class="when">2025</div>
+        </div>
+        <h3>Shortify</h3>
+        <p>A URL shortener with deterministic deduplication and Base62 short-code generation. Benchmarked at 3,000+ redirects/sec under 100 concurrent users, with 43.9 ms p95 latency and zero request failures.</p>
+        <a class="proj-link" href="https://github.com/sid-zyy/shortify" target="_blank" rel="noopener">View repo ↗</a>
+      </div>
+      <div class="proj">
+        <div class="meta-row">
+          <div class="stack">Node.js · MongoDB · React</div>
+          <div class="when">2025</div>
+        </div>
+        <h3>Linene</h3>
+        <p>A full-stack note-taking app with sub-100 ms median API latency, JWT session management, and Redis-backed rate limiting (100 req/min per user) to stay stable under burst traffic.</p>
+        <a class="proj-link" href="https://github.com/sid-zyy/linene" target="_blank" rel="noopener">View repo ↗</a>
+      </div>
+    </div>
+
+    <div class="proj-mini-row">
+      <div class="proj-mini">
+        <h4>LSH — Little Shell</h4>
+        <p>A minimal Unix shell built from scratch: fork/exec process control, input parsing, and built-in commands.</p>
+        <a class="proj-link" href="https://github.com/sid-zyy/basic-shell" target="_blank" rel="noopener">View repo ↗</a>
+      </div>
+      <div class="proj-mini">
+        <h4>mygrep</h4>
+        <p>A subset of Unix grep with substring search and common flags, using getopt() and manual buffer handling.</p>
+        <a class="proj-link" href="https://github.com/sid-zyy/mygrep" target="_blank" rel="noopener">View repo ↗</a>
+      </div>
+      <div class="proj-mini">
+        <h4>duplicount</h4>
+        <p>A CLI utility that sorts and scans a file to report every duplicate line and its occurrence count.</p>
+        <a class="proj-link" href="https://github.com/sid-zyy/duplicount" target="_blank" rel="noopener">View repo ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section id="skills" class="reveal">
+    <div class="section-head">
+      <h2>Skills</h2>
+      <div class="idx">05 — Toolset</div>
+    </div>
+    <div class="skill-cols">
+      <div class="skill-col">
+        <div class="h">Languages</div>
+        <ul><li>Python</li><li>C / C++</li><li>Java</li><li>JavaScript</li><li>SQL</li></ul>
+      </div>
+      <div class="skill-col">
+        <div class="h">ML &amp; Research</div>
+        <ul><li>PyTorch</li><li>GraphSAGE</li><li>Flower</li><li>Weights &amp; Biases</li><li>Hydra</li></ul>
+      </div>
+      <div class="skill-col">
+        <div class="h">Systems &amp; Backend</div>
+        <ul><li>Linux / POSIX</li><li>Node.js · Express</li><li>Flask · Spring Boot</li><li>Playwright</li><li>Git</li></ul>
+      </div>
+      <div class="skill-col">
+        <div class="h">Databases</div>
+        <ul><li>PostgreSQL</li><li>MySQL</li><li>MongoDB</li><li>Redis</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section id="edu" class="reveal">
+    <div class="section-head">
+      <h2>Education</h2>
+      <div class="idx">06 — Foundation</div>
+    </div>
+    <div class="grid">
+      <div class="edu-card">
+        <h3>Manipal Institute of Technology, Bengaluru</h3>
+        <div class="org">Bachelor of Technology, Computer Science · Expected June 2028</div>
+        <div class="gpa">GPA 9.14 / 10.0</div>
+      </div>
+      <div>
+        <ul class="cert-list">
+          <li>IBM Data Fundamentals</li>
+          <li>Java Programming — Coursera</li>
+          <li>Python for Everybody — Coursera (Dr. Chuck)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2>Let's build or research something together.</h2>
+    <p>Open to backend, systems, ML research, and quant-adjacent roles — reach out directly or find the code on GitHub.</p>
+    <div class="contact-links">
+      <a class="btn primary" href="mailto:siddhartha.shankar0201@gmail.com">Email me →</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/siddhartha-shankar-4078a537a/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn ghost" href="https://github.com/sid-zyy" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn ghost" href="tel:+919606349900">+91 96063 49900</a>
+    </div>
+    <div class="foot-bottom">
+      <span>Siddhartha Shankar — Bengaluru, Karnataka</span>
+      <span>siddhartha.shankar0201@gmail.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    }, {threshold:0.12});
+    revealEls.forEach(el=>io.observe(el));
+  } else {
+    revealEls.forEach(el=>el.classList.add('in'));
+  }
+
+  // Mobile menu toggle
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const menu = document.getElementById('mobileMenu');
+    toggle.addEventListener('click', ()=>{
+      const isOpen = menu.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    menu.querySelectorAll('a').forEach(a=>{
+      a.addEventListener('click', ()=>{
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  })();
+
+  // Static mini matrix in research card
+  (function(){
+    const ns = 'http://www.w3.org/2000/svg';
+    const g = document.getElementById('staticMatrix');
+    const cols = 8, size = 14, gap = 3.5;
+    for(let i=0;i<cols;i++){
+      for(let j=0;j<cols;j++){
+        const r = document.createElementNS(ns,'rect');
+        r.setAttribute('x', i*(size+gap));
+        r.setAttribute('y', j*(size+gap));
+        r.setAttribute('width', size);
+        r.setAttribute('height', size);
+        const active = Math.random() > 0.62;
+        r.setAttribute('fill', active ? 'rgba(232,163,61,0.5)' : 'rgba(232,163,61,0.06)');
+        g.appendChild(r);
+      }
+    }
+  })();
+
+  // Animated attention-head ablation matrix, hero background
+  (function(){
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let w, h, cellsX, cellsY, cell = 26;
+    let dots = [];
+
+    function resize(){
+      w = canvas.parentElement.offsetWidth;
+      h = canvas.parentElement.offsetHeight;
+      canvas.width = w * devicePixelRatio;
+      canvas.height = h * devicePixelRatio;
+      canvas.style.width = w+'px';
+      canvas.style.height = h+'px';
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+      cellsX = Math.ceil(w/cell)+1;
+      cellsY = Math.ceil(h/cell)+1;
+      dots = [];
+      for(let i=0;i<cellsX;i++){
+        for(let j=0;j<cellsY;j++){
+          dots.push({
+            x:i*cell, y:j*cell,
+            base: Math.random()*0.05,
+            phase: Math.random()*Math.PI*2,
+            speed: 0.4 + Math.random()*0.6,
+            spike: Math.random() < 0.06
+          });
+        }
+      }
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function draw(t){
+      ctx.clearRect(0,0,w,h);
+      const time = t/1000;
+      dots.forEach(d=>{
+        let alpha = d.base + Math.sin(time*d.speed + d.phase)*0.03;
+        if(d.spike){
+          const pulse = (Math.sin(time*0.5 + d.phase)+1)/2;
+          if(pulse > 0.93) alpha = 0.5;
+        }
+        alpha = Math.max(0, alpha);
+        ctx.fillStyle = `rgba(232,163,61,${alpha})`;
+        ctx.fillRect(d.x, d.y, 2, 2);
+      });
+      if(!reduceMotion) requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();
+</script>
+
+</body>
+</html>
