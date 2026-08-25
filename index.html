@@ -177,39 +177,55 @@
   .btn.ghost{border:1px solid var(--line); color:var(--text);}
   .btn.ghost:hover{border-color:var(--accent-line); color:var(--accent-bright);}
 
-  /* ---- signal readout panel (hero widget) ---- */
+  /* ---- hero graphic panel ---- */
   .signal-panel{
     background:var(--panel); border:1px solid var(--line); border-radius:6px;
     overflow:hidden; box-shadow:0 30px 60px -30px rgba(0,0,0,0.6);
   }
-  .signal-panel .titlebar{
-    display:flex; align-items:center; gap:8px; padding:11px 14px;
-    border-bottom:1px solid var(--line); background:var(--panel-raise);
+  .signal-panel .graphic-area{
+    position:relative; padding:6px 6px 0;
   }
-  .signal-panel .titlebar .dot{width:8px; height:8px; border-radius:50%; background:var(--line);}
-  .signal-panel .titlebar .fname{
-    font-family:var(--mono); font-size:11px; color:var(--muted); margin-left:6px; letter-spacing:0.02em;
+  .signal-panel .graphic-area svg{display:block; width:100%; height:auto;}
+  .signal-panel .caption-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:10.5px; color:var(--dim);
+    text-transform:uppercase; letter-spacing:0.06em;
   }
-  .signal-panel .chart-area{padding:18px 18px 6px; position:relative;}
-  .signal-panel canvas{display:block; width:100%; height:110px;}
-  .signal-panel .readout{
-    display:flex; justify-content:space-between; align-items:baseline;
-    padding:0 18px 16px;
-    font-family:var(--mono);
+  .signal-panel .caption-row .legend{display:flex; align-items:center; gap:16px;}
+  .signal-panel .caption-row .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .signal-panel .caption-row .swatch{width:7px; height:7px; border-radius:50%; display:inline-block;}
+
+  /* node/edge animation */
+  .node-graph .edge{
+    fill:none; stroke-width:1.4;
+    stroke-dasharray:5 5;
+    animation:dashFlow 3.2s linear infinite;
   }
-  .signal-panel .readout .val{font-size:22px; color:var(--pos); font-weight:600;}
-  .signal-panel .readout .cap{font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:0.08em; margin-top:3px;}
-  .signal-panel .rows{border-top:1px solid var(--line);}
-  .signal-panel .row{
-    display:flex; justify-content:space-between; padding:10px 18px;
-    font-family:var(--mono); font-size:11.5px; border-bottom:1px solid var(--line-soft);
+  .node-graph .edge.cross{
+    stroke-dasharray:2 6;
+    animation-duration:5s;
   }
-  .signal-panel .row:last-child{border-bottom:none;}
-  .signal-panel .row .k{color:var(--dim); text-transform:uppercase; letter-spacing:0.06em;}
-  .signal-panel .row .v{color:var(--muted);}
-  .signal-panel .row .v.on{color:var(--pos);}
-  .cursor-blink{display:inline-block; width:6px; height:12px; background:var(--accent); margin-left:2px; animation:blink 1s step-end infinite; vertical-align:middle;}
-  @keyframes blink{50%{opacity:0;}}
+  @keyframes dashFlow{ to{ stroke-dashoffset:-100; } }
+  .node-graph .node{
+    animation:nodePulse 3.6s ease-in-out infinite;
+    transform-origin:center;
+    transform-box:fill-box;
+  }
+  @keyframes nodePulse{
+    0%,100%{ transform:scale(1); filter:drop-shadow(0 0 0 rgba(91,141,239,0)); }
+    50%{ transform:scale(1.18); filter:drop-shadow(0 0 6px currentColor); }
+  }
+  .node-graph .traveler{
+    animation:travel linear infinite;
+    offset-rotate:0deg;
+  }
+  @keyframes travel{
+    from{ offset-distance:0%; opacity:0; }
+    8%{ opacity:1; }
+    92%{ opacity:1; }
+    to{ offset-distance:100%; opacity:0; }
+  }
 
   /* ---- ticker marquee ---- */
   .ticker-wrap{
@@ -225,6 +241,7 @@
   }
   .ticker-item b{color:var(--text); font-weight:600;}
   .ticker-item .up{color:var(--pos); font-size:10px;}
+  .ticker-item .dn{color:var(--accent-bright); font-size:10px;}
   @keyframes tickerScroll{
     from{transform:translateX(0);}
     to{transform:translateX(-50%);}
@@ -342,6 +359,9 @@
     .ticker-track{animation:none;}
     .cursor-blink{animation:none;}
     .pulse-dot{animation:none;}
+    .node-graph .edge{animation:none; stroke-dasharray:none;}
+    .node-graph .node{animation:none;}
+    .node-graph .traveler{animation:none; opacity:0;}
   }
   :focus-visible{outline:1px solid var(--accent); outline-offset:3px;}
 </style>
@@ -387,29 +407,79 @@
       </div>
 
       <div class="signal-panel reveal" id="signalPanel">
-        <div class="titlebar">
-          <span class="dot" style="background:#E0605A"></span>
-          <span class="dot" style="background:#E0B75A"></span>
-          <span class="dot" style="background:var(--pos)"></span>
-          <span class="fname">attention_modularity.eval</span>
+        <div class="graphic-area">
+          <svg class="node-graph" viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated diagram of a transformer: token representations flow left to right through four layers along a residual stream, with curved attention arcs at each layer showing attention range widening with depth">
+            <g font-family="var(--mono)" font-size="9" fill="var(--dim)" letter-spacing="1">
+              <text x="40" y="18" text-anchor="middle">L1</text>
+              <text x="173" y="18" text-anchor="middle">L2</text>
+              <text x="306" y="18" text-anchor="middle">L3</text>
+              <text x="440" y="18" text-anchor="middle">L4</text>
+            </g>
+
+            <g stroke="var(--line)" stroke-width="1.4">
+              <path d="M32,38 L448,38" />
+              <path d="M32,89 L448,89" />
+              <path d="M32,140 L448,140" />
+              <path d="M32,191 L448,191" />
+              <path d="M32,242 L448,242" />
+            </g>
+
+            <g stroke="var(--accent-line)" fill="none">
+              <path class="edge" d="M40,38 C56,38 56,89 40,89" />
+              <path class="edge" d="M40,89 C56,89 56,140 40,140" />
+              <path class="edge" d="M40,140 C56,140 56,191 40,191" />
+              <path class="edge" d="M40,191 C56,191 56,242 40,242" />
+              <path class="edge" d="M173,38 C199,38 199,89 173,89" />
+              <path class="edge" d="M173,89 C199,89 199,242 173,242" />
+              <path class="edge" d="M173,140 C199,140 199,242 173,242" />
+              <path class="edge" d="M173,38 C199,38 199,140 173,140" />
+            </g>
+            <g stroke="rgba(62,207,142,0.32)" fill="none">
+              <path class="edge" d="M306,38 C272,38 272,191 306,191" />
+              <path class="edge" d="M306,89 C272,89 272,242 306,242" />
+              <path class="edge" d="M306,38 C272,38 272,242 306,242" />
+              <path class="edge cross" d="M440,38 C406,38 406,242 440,242" />
+              <path class="edge cross" d="M440,89 C406,89 406,191 440,191" />
+            </g>
+
+            <g fill="var(--accent-bright)" color="var(--accent-bright)">
+              <circle class="node" cx="40" cy="38" r="5" style="animation-delay:-0.2s"/>
+              <circle class="node" cx="40" cy="89" r="5" style="animation-delay:-1.4s"/>
+              <circle class="node" cx="40" cy="140" r="5" style="animation-delay:-0.6s"/>
+              <circle class="node" cx="40" cy="191" r="5" style="animation-delay:-1.8s"/>
+              <circle class="node" cx="40" cy="242" r="5" style="animation-delay:-1s"/>
+              <circle class="node" cx="173" cy="38" r="5" style="animation-delay:-2.2s"/>
+              <circle class="node" cx="173" cy="89" r="5.5" style="animation-delay:-0.4s"/>
+              <circle class="node" cx="173" cy="140" r="5" style="animation-delay:-1.6s"/>
+              <circle class="node" cx="173" cy="191" r="5" style="animation-delay:-0.9s"/>
+              <circle class="node" cx="173" cy="242" r="5" style="animation-delay:-2.6s"/>
+            </g>
+            <g fill="var(--pos)" color="var(--pos)">
+              <circle class="node" cx="306" cy="38" r="5" style="animation-delay:-1.1s"/>
+              <circle class="node" cx="306" cy="89" r="5" style="animation-delay:-0.3s"/>
+              <circle class="node" cx="306" cy="140" r="5.5" style="animation-delay:-2.3s"/>
+              <circle class="node" cx="306" cy="191" r="5" style="animation-delay:-1.5s"/>
+              <circle class="node" cx="306" cy="242" r="5" style="animation-delay:-0.7s"/>
+              <circle class="node" cx="440" cy="38" r="5" style="animation-delay:-1.9s"/>
+              <circle class="node" cx="440" cy="89" r="5" style="animation-delay:-0.5s"/>
+              <circle class="node" cx="440" cy="140" r="5.5" style="animation-delay:-2.8s"/>
+              <circle class="node" cx="440" cy="191" r="5" style="animation-delay:-1.3s"/>
+              <circle class="node" cx="440" cy="242" r="5" style="animation-delay:-0.1s"/>
+            </g>
+
+            <circle class="traveler" r="3" fill="var(--accent-bright)" style="offset-path:path('M32,38 L448,38'); animation-duration:3.4s;"/>
+            <circle class="traveler" r="3" fill="var(--accent-bright)" style="offset-path:path('M32,89 L448,89'); animation-duration:4.1s; animation-delay:-1.2s;"/>
+            <circle class="traveler" r="3" fill="var(--pos)" style="offset-path:path('M32,140 L448,140'); animation-duration:3.8s; animation-delay:-2s;"/>
+            <circle class="traveler" r="3" fill="var(--pos)" style="offset-path:path('M32,191 L448,191'); animation-duration:4.4s; animation-delay:-0.7s;"/>
+            <circle class="traveler" r="3" fill="var(--accent-bright)" style="offset-path:path('M32,242 L448,242'); animation-duration:3.6s; animation-delay:-1.7s;"/>
+          </svg>
         </div>
-        <div class="chart-area">
-          <canvas id="sparkline" width="480" height="110"></canvas>
-        </div>
-        <div class="readout">
-          <div>
-            <div class="val" id="liveVal">0.014</div>
-            <div class="cap">non-additivity gap · 410M params</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="val" style="color:var(--accent-bright); font-size:16px;">Δ 35×</div>
-            <div class="cap">vs. 117M baseline</div>
-          </div>
-        </div>
-        <div class="rows">
-          <div class="row"><span class="k">model</span><span class="v">gpt2-410M</span></div>
-          <div class="row"><span class="k">pairs tested</span><span class="v">10,706</span></div>
-          <div class="row"><span class="k">status</span><span class="v on">converged<span class="cursor-blink"></span></span></div>
+        <div class="caption-row">
+          <span>Attention across layers — illustrative</span>
+          <span class="legend">
+            <span><span class="swatch" style="background:var(--accent-bright)"></span>early layers</span>
+            <span><span class="swatch" style="background:var(--pos)"></span>late layers</span>
+          </span>
         </div>
       </div>
     </div>
@@ -679,7 +749,7 @@
       {t:'PYTORCH'}, {t:'GRAPHSAGE'}, {t:'ATTENTION-HEADS', v:'10,706 PAIRS', up:true},
       {t:'ALPHA-SIGNALS', v:'15+ SHIPPED', up:true}, {t:'WORLDQUANT BRAIN', v:'GOLD TIER', up:true},
       {t:'FLOWER'}, {t:'HYDRA'}, {t:'C / POSIX'}, {t:'REDIS'}, {t:'FASTAPI · FLASK'},
-      {t:'NON-ADDITIVITY GAP', v:'35× ↓', up:true}, {t:'GRAPHQL'}, {t:'DOCKER'}
+      {t:'NON-ADDITIVITY GAP', v:'35× LOWER', dn:true}, {t:'GRAPHQL'}, {t:'DOCKER'}
     ];
     const track = document.getElementById('tickerTrack');
     function renderSet(){
@@ -687,78 +757,14 @@
       items.forEach(it=>{
         const el = document.createElement('span');
         el.className = 'ticker-item';
-        el.innerHTML = `<b>${it.t}</b>${it.v ? ' '+it.v : ''}${it.up ? ' <span class="up">▲</span>' : ''}`;
+        const marker = it.up ? ' <span class="up">▲</span>' : (it.dn ? ' <span class="dn">▼</span>' : '');
+        el.innerHTML = `<b>${it.t}</b>${it.v ? ' '+it.v : ''}${marker}`;
         frag.appendChild(el);
       });
       return frag;
     }
     track.appendChild(renderSet());
     track.appendChild(renderSet());
-  })();
-
-  // Hero signal panel: animated sparkline + ticking readout
-  (function(){
-    const canvas = document.getElementById('sparkline');
-    const ctx = canvas.getContext('2d');
-    const liveVal = document.getElementById('liveVal');
-    const dpr = window.devicePixelRatio || 1;
-    const cw = canvas.clientWidth || 480, ch = 110;
-    canvas.width = cw*dpr; canvas.height = ch*dpr;
-    ctx.scale(dpr,dpr);
-
-    const points = 40;
-    let series = [];
-    for(let i=0;i<points;i++){
-      series.push(0.35 + Math.random()*0.3 - (i/points)*0.28);
-    }
-
-    function draw(){
-      ctx.clearRect(0,0,cw,ch);
-      // gridlines
-      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-      ctx.lineWidth = 1;
-      for(let i=1;i<4;i++){
-        const y = (ch/4)*i;
-        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cw,y); ctx.stroke();
-      }
-      // line
-      const max = Math.max(...series), min = Math.min(...series);
-      const range = (max-min) || 1;
-      ctx.beginPath();
-      series.forEach((v,i)=>{
-        const x = (i/(points-1))*cw;
-        const y = ch - ((v-min)/range)*(ch-16) - 8;
-        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.strokeStyle = '#5B8DEF';
-      ctx.lineWidth = 2;
-      ctx.lineJoin = 'round';
-      ctx.stroke();
-      // fill
-      const grad = ctx.createLinearGradient(0,0,0,ch);
-      grad.addColorStop(0,'rgba(91,141,239,0.22)');
-      grad.addColorStop(1,'rgba(91,141,239,0)');
-      ctx.lineTo(cw,ch); ctx.lineTo(0,ch); ctx.closePath();
-      ctx.fillStyle = grad; ctx.fill();
-      // last point dot
-      const lastV = series[series.length-1];
-      const lx = cw, ly = ch - ((lastV-min)/range)*(ch-16) - 8;
-      ctx.beginPath(); ctx.arc(lx-2, ly, 3, 0, Math.PI*2);
-      ctx.fillStyle = '#3ECF8E'; ctx.fill();
-    }
-    draw();
-
-    if(reduceMotion) return;
-
-    let t = 0;
-    setInterval(()=>{
-      series.shift();
-      const last = series[series.length-1];
-      const next = Math.max(0.02, last + (Math.random()-0.52)*0.05);
-      series.push(next);
-      draw();
-      liveVal.textContent = (0.008 + Math.random()*0.012).toFixed(3);
-    }, 1400);
   })();
 
   // Small static sparkline in the paper card (SVG polyline)
